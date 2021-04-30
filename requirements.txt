@@ -9,7 +9,7 @@ Pillow
 PyYAML>=5.3.1
 scipy>=1.4.1
 # torch==1.8.1+cpu
-https://download.pytorch.org/whl/cpu/torch-1.8.1%2Bcpu-cp38-cp38-linux_x86_64.whl
+https://download.pytorch.org/whl/cpu/torch-1.8.1%2Bcpu-cp39-cp39-linux_x86_64.whl
 torchvision==0.9.1+cpu
 tqdm>=4.41.0
 
