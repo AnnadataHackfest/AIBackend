@@ -9,8 +9,8 @@ from flask import Flask, request, jsonify, render_template
 device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 app = Flask(__name__)
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s', classes=30, autoshape = False)
-model.load_state_dict(torch.load('best (1).pt', map_location = 'cpu')['model'].state_dict())
+model = torch.hub.load('ultralytics/yolov5', 'yolov5l', classes=30, autoshape = False)
+model.load_state_dict(torch.load('5l.pt', map_location = 'cpu')['model'].state_dict())
 model = model.autoshape()
 # model = torch.hub.load('ultralytics/yolov5', 'custom', path_or_model = 'best.pt', map_location = 'cpu')
 model = model.to(device).eval()
