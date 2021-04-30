@@ -1,7 +1,7 @@
 Flask==1.1.2
 gunicorn==19.9.0
 imageio==2.9.0
-
+pip==20.2.4
 matplotlib>=3.2.2
 numpy>=1.18.5
 opencv-python>=4.1.2
