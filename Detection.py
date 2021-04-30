@@ -4,6 +4,7 @@ import requests
 import torch
 import time
 import io
+from collections import Counter
 from flask import Flask, request, jsonify, render_template
 device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -13,13 +14,13 @@ model.load_state_dict(torch.load('best (1).pt', map_location = 'cpu')['model'].s
 model = model.autoshape()
 # model = torch.hub.load('ultralytics/yolov5', 'custom', path_or_model = 'best.pt', map_location = 'cpu')
 model = model.to(device).eval()
-classes = ['Apple Scab Leaf', 'Apple leaf', 'Apple rust leaf', 'Bell_pepper leaf spot', 'Bell_pepper leaf',
-          'Blueberry leaf', 'Cherry leaf', 'Corn Gray leaf spot', 'Corn leaf blight', 'Corn rust leaf',
+classes = ['Apple Scab Leaf', 'Apple leaf', 'Apple rust leaf', 'Bell_pepper spot leaf', 'Bell_pepper leaf',
+          'Blueberry leaf', 'Cherry leaf', 'Corn Gray spot leaf', 'Corn blight leaf', 'Corn rust leaf',
           'Peach leaf', 'Potato leaf early blight', 'Potato leaf late blight', 'Potato leaf', 'Raspberry leaf', 
           'Soyabean leaf', 'Soybean leaf', 'Squash Powdery mildew leaf', 'Strawberry leaf', 'Tomato Early blight leaf',
-          'Tomato Septoria leaf spot', 'Tomato leaf bacterial spot', 'Tomato leaf late blight', 'Tomato leaf mosaic virus', 
-          'Tomato leaf yellow virus', 'Tomato leaf', 'Tomato mold leaf', 'Tomato two spotted spider mites leaf', 
-          'grape leaf black rot', 'grape leaf']
+          'Tomato Septoria spot leaf', 'Tomato bacterial spot leaf', 'Tomato late blight leaf', 'Tomato mosaic virus leaf', 
+          'Tomato yellow virus leaf', 'Tomato leaf', 'Tomato mold leaf', 'Tomato two spotted spider mites leaf', 
+          'grape black rot leaf', 'grape leaf']
     
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -38,7 +39,8 @@ def predict():
         result=result.xyxy[0].cpu().numpy()
         result=result.tolist()
         # list containing dictionary of all bounding box of individual image
-        out={}       
+        out={'boxes' : []}    
+        all_classes = []
         for i in range(len(result)):
             temp={}  
             temp['box']= result[i][:4]
@@ -47,8 +49,19 @@ def predict():
             
             temp['confidence']=float(result[i][4])
             temp['class']=classes[ int(result[i][5])]
-            out[i] = temp
+            all_classes.append(temp['class'])	
+            out['boxes'].append(temp)
         
+        freq = Counter(all_classes).most_common(1)[0][0]
+        print(freq)
+        out['plant_name'] = freq.split()[0]
+        if len(freq.split()) == 2:
+            out['disease'] = False
+            out['disease_name'] = ''
+        else:
+            out['disease'] = True
+            out['disease_name'] = ' '.join(freq.split()[1:-1])
+
     return jsonify(out)
 
 if __name__ == "__main__":
