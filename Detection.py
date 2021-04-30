@@ -45,7 +45,7 @@ def predict():
             modify= [w/416, h/416, w/416, h/416]
             temp['box'] = [ int(temp['box'][j] * modify[j]) for j in range(4) ]
             
-            temp['confidence']=int(result[i][4])
+            temp['confidence']=float(result[i][4])
             temp['class']=classes[ int(result[i][5])]
             out[i] = temp
         
