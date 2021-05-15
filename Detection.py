@@ -7,6 +7,7 @@ import io
 from collections import Counter
 from flask import Flask, request, jsonify, render_template
 device=torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 model = torch.hub.load('ultralytics/yolov5', 'yolov5s', classes=30, autoshape = False)
@@ -23,6 +24,7 @@ classes = ['Apple Scab Leaf', 'Apple leaf', 'Apple rust leaf', 'Bell_pepper spot
           'grape black rot leaf', 'grape leaf']
     
 @app.route('/predict', methods=['POST'])
+@cross_origin(supports_credentials=True)
 def predict():
     if request.method == 'POST':
         file = request.files['file']
